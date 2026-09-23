@@ -12,6 +12,8 @@ import logging
 import sys
 from pathlib import Path
 
+from data_loaders import load_data
+
 logger = logging.getLogger(__name__)
 
 def setup_logging(verbose=False):
@@ -58,11 +60,20 @@ def main():
     """Main pipeline function."""
     args = parse_arguments()
     setup_logging(args.verbose)
+ 
     logger.debug(
         f"Arguments parsed: input={args.input}, output={args.output}, format={args.format}"
     )
+ 
     if not validate_input(args.input):
-        sys.exit(1)  
-
+        sys.exit(1)
+ 
+    try:
+        data = load_data(args.input)
+    except ValueError:
+        # load_data() already logged the ERROR message internally
+        sys.exit(1)
+ 
+ 
 if __name__ == "__main__":
     main()
